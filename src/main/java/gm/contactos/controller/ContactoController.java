@@ -9,6 +9,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 
 import gm.contactos.model.Contacto;
@@ -40,6 +41,29 @@ public class ContactoController {
         contactoService.guardarContacto(contacto);
         logger.info("Contacto guardado: " + contacto.toString());
         return "redirect:/"; //Redirigimos al path de inicio
+    }
+
+    @GetMapping("/editar/{id}")
+    public String mostrarEditar(@PathVariable(value ="id") int idContacto, ModelMap modelo) {
+        Contacto contacto = contactoService.buscarContactoPorId(idContacto);
+        logger.info ("Contacto a editar (mostrar) : "+ contacto);
+        modelo.put("contacto", contacto);
+        return "editar"; // Editar.html
+    }
+
+    @PostMapping("/editar")
+    public String editar(@ModelAttribute("contacto") Contacto contacto) {
+        logger.info("Contacto a editar: " + contacto);
+        contactoService.guardarContacto(contacto);
+        return "redirect:/";
+    }
+
+    @GetMapping("/eliminar/{id}")
+    public String eliminar(@PathVariable(value ="id") int idContacto) {
+        Contacto contacto = contactoService.buscarContactoPorId(idContacto);
+        contactoService.eliminarContacto(contacto);
+        logger.info("Contacto eliminado: " + contacto.toString());
+        return "redirect:/";
     }
 
 }
